@@ -1,6 +1,11 @@
 {
   "name": "markdowner",
-  "source": "index.html",
+  "source": "src/index.html",
+  "targets": {
+    "default": {
+      "publicUrl": "/markdowner"
+    }
+  },
   "scripts": {
     "dev": "parcel serve",
     "build": "parcel build"
