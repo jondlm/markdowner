@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# `x` prints every command the script runs.
+set -euox pipefail
+
+if ! git diff; then
+  printf "Please clean up your git state as this script needs to checkout the gh-pages branch.\n"
+  exit 1
+fi
+
+TEMP_DIR=$(mktemp -d)
+
+# Defer cleanup.
+cleanup() {
+  ls "$TEMP_DIR"
+  rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
+
+# Clear previous `dist`.
+if [ -d dist ]; then
+  rm -rf dist
+fi
+
+# Writes new files to `dist`.
+pnpm build
+cp -r dist/* "$TEMP_DIR"
+
+# Checkout `gh-pages` if it exists. Might not need this `if` check
+if git show-ref --quiet refs/heads/gh-pages; then
+  git checkout gh-pages
+else
+  git checkout --orphan gh-pages
+fi
+
+# Remove all git tracked files.
+git rm -rf .
+git checkout main -- .gitignore
+
+# Copy over the new assets.
+cp -r "$TEMP_DIR"/* .
+
+# Add, commit, push.
+git add -A
+git commit -m "gh-pages deploy"
+git push
+
+# Return to the main branch.
+git checkout main

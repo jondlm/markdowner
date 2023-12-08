@@ -1,0 +1,14 @@
+{
+  "name": "markdowner",
+  "source": "index.html",
+  "scripts": {
+    "dev": "parcel serve",
+    "build": "parcel build"
+  },
+  "devDependencies": {
+    "dompurify": "^3.0.6",
+    "github-markdown-css": "^5.4.0",
+    "marked": "^11.0.0",
+    "parcel": "2.10.3"
+  }
+}
